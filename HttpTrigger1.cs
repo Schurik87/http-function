@@ -1,0 +1,33 @@
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+
+namespace Company.Function
+{
+    public class HttpTrigger1
+    {
+        private readonly ILogger<HttpTrigger1> _logger;
+
+        public HttpTrigger1(ILogger<HttpTrigger1> logger)
+        {
+            _logger = logger;
+        }
+
+        [Function("HttpTrigger1")]
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
+        {
+            var clientIPAddress = req.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("Welcome to Azure Functions!");
+            stringBuilder.Append($" Date: {DateTime.Now}");
+            stringBuilder.Append($" clientIPAddress: {clientIPAddress}");
+
+            return new OkObjectResult(stringBuilder.ToString());
+        }
+    }
+}
